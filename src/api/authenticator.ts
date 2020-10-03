@@ -1,7 +1,7 @@
 import { Got, Response } from 'got';
 import { JSDOM } from 'jsdom';
 import FormData from 'form-data';
-import credentials from './credentials.json';
+import credentials from '../credentials.json';
 
 const LOGIN_URL = 'https://id.unity.com/en/login';
 const UNITY_SALES_URL = 'https://publisher.assetstore.unity3d.com/sales.html';
@@ -10,7 +10,7 @@ export class Authenticator {
     constructor(private readonly httpClient: Got) {
     }
 
-    public async authenticate(): Promise<void> {
+    public async authenticate(email: string, password: string): Promise<void> {
         /**
          * Phase 1: Retrieve authenticity token from the login page HTML.
          */
@@ -27,7 +27,7 @@ export class Authenticator {
          */
         console.log('Logging in with URL ' + 'https://id.unity.com' + action);
         await this.httpClient.post('https://id.unity.com' + action, {
-            body: this.createLoginFormData(authenticityToken),
+            body: this.createLoginFormData(authenticityToken, email, password),
             // This POST request will redirect to https://api.unity.com/v1/oauth2/authorize?cid=[authenticityToken]
             // It needs to send a GET request to this endpoint. If methodRewriting is TRUE, a POST request with the same
             // body will be sent to the endpoint instead.
@@ -45,7 +45,7 @@ export class Authenticator {
         console.log('Session token retrieved.');
     }
 
-    private createLoginFormData(authenticityToken: string): FormData {
+    private createLoginFormData(authenticityToken: string, email: string, password: string): FormData {
         const formData = new FormData();
         formData.append('utf8', '✓');
         formData.append('_method', 'put');
