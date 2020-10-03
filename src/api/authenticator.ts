@@ -2,6 +2,7 @@ import { Got, Response } from 'got';
 import { JSDOM } from 'jsdom';
 import FormData from 'form-data';
 import credentials from '../credentials.json';
+import { logSuccess } from '../log';
 
 const LOGIN_URL = 'https://id.unity.com/en/login';
 const UNITY_SALES_URL = 'https://publisher.assetstore.unity3d.com/sales.html';
@@ -25,7 +26,7 @@ export class Authenticator {
         /**
          * Phase 2: Log in using retrieved authenticity token and form data.
          */
-        console.log('Logging in with URL ' + 'https://id.unity.com' + action);
+        console.log('Logging in...');
         await this.httpClient.post('https://id.unity.com' + action, {
             body: this.createLoginFormData(authenticityToken, email, password),
             // This POST request will redirect to https://api.unity.com/v1/oauth2/authorize?cid=[authenticityToken]
@@ -40,7 +41,7 @@ export class Authenticator {
          * This redirect URL is embedded in a <meta http-equiv="refresh"> element.
          * Following this URL will retrieve the kharma_session and kharma_token which are used to authenticate against the publisher API.
          */
-        console.log('Logged in successfully. Retrieving session token...');
+        logSuccess('Logged in successfully. Retrieving session token...');
         await this.retrieveSessionCookies();
         console.log('Session token retrieved.');
     }

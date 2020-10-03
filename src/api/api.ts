@@ -1,10 +1,10 @@
-import got from 'got';
+import got, { RequestError } from 'got';
 import tough from 'tough-cookie';
 import { Authenticator } from './authenticator';
-import credentials from '../credentials.json';
 import { OverviewData } from './models/overviewData';
 import { MonthData } from './models/monthData';
 import { SalesData, toSalesData } from './models/salesData';
+import { logError } from '../log';
 
 const CookieJar = tough.CookieJar;
 
@@ -14,6 +14,16 @@ const PUBLISHER_INFO_BASE_URL = 'https://publisher.assetstore.unity3d.com/api/pu
 const jar = new CookieJar();
 const http = got.extend({
     cookieJar: jar,
+    hooks: {
+        beforeError: [
+            (error: RequestError) => {
+                if (error.response.statusCode === 401) {
+                    logError('Encountered authorization error. Try calling UnityPublisherApi.authenticate() again.');
+                }
+                return error;
+            },
+        ],
+    },
 });
 
 export class UnityPublisherApi {
@@ -21,8 +31,8 @@ export class UnityPublisherApi {
 
     private publisherId: string = null;
 
-    public async authenticate(): Promise<void> {
-        await this.authenticator.authenticate(credentials.email, credentials.password);
+    public async authenticate(email: string, password: string): Promise<void> {
+        await this.authenticator.authenticate(email, password);
         await this.fetchPublisherId();
     }
 
@@ -30,7 +40,6 @@ export class UnityPublisherApi {
         console.log('Fetching publisher id...');
         const overview = await this.getOverview();
         this.publisherId = overview.id;
-        console.log(this.publisherId);
     }
 
     public async getOverview(): Promise<OverviewData> {
@@ -51,6 +60,9 @@ export class UnityPublisherApi {
     }
 
     private getPublisherInfoUrl(type: 'months' | 'sales'): string {
+        if (!this.publisherId) {
+            throw new Error('Publisher id not set.');
+        }
         return `${PUBLISHER_INFO_BASE_URL}/${type}/${this.publisherId}`;
     }
 }
