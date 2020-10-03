@@ -4,6 +4,7 @@ import { Authenticator } from './authenticator';
 import credentials from '../credentials.json';
 import { OverviewData } from './models/overviewData';
 import { MonthData } from './models/monthData';
+import { SalesData, toSalesData } from './models/salesData';
 
 const CookieJar = tough.CookieJar;
 
@@ -43,10 +44,10 @@ export class UnityPublisherApi {
         return data.periods;
     }
 
-    public async getSalesData(month: string) {
+    public async getSalesData(month: string): Promise<SalesData[]> {
         const salesUrl = `${this.getPublisherInfoUrl('sales')}/${month}.json`;
-        const data = await http.get(salesUrl).json();
-        console.log(data);
+        const data = await http.get(salesUrl).json<{ aaData: Array<string[]> }>();
+        return data.aaData.map(toSalesData);
     }
 
     private getPublisherInfoUrl(type: 'months' | 'sales'): string {
