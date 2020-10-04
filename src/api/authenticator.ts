@@ -1,7 +1,6 @@
 import { Got, Response } from 'got';
 import { JSDOM } from 'jsdom';
 import FormData from 'form-data';
-import credentials from '../credentials.json';
 import { logSuccess } from '../log';
 
 const LOGIN_URL = 'https://id.unity.com/en/login';
@@ -51,8 +50,8 @@ export class Authenticator {
         formData.append('utf8', '✓');
         formData.append('_method', 'put');
         formData.append('authenticity_token', authenticityToken);
-        formData.append('conversations_create_session_form[email]', credentials.email);
-        formData.append('conversations_create_session_form[password]', credentials.password);
+        formData.append('conversations_create_session_form[email]', email);
+        formData.append('conversations_create_session_form[password]', password);
         formData.append('conversations_create_session_form[remember_me]', 'false');
         formData.append('commit', 'Sign in');
         return formData;
