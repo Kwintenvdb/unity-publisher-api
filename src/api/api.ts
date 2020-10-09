@@ -5,7 +5,7 @@ import { OverviewData } from './models/overviewData';
 import { MonthData } from './models/monthData';
 import { SalesData, toSalesData } from './models/salesData';
 import { logError } from '../log';
-import { PackageData } from './models/packageData';
+import { PackageData, toPackageData } from './models/packageData';
 
 const CookieJar = tough.CookieJar;
 
@@ -50,8 +50,8 @@ export class UnityPublisherApi {
 
     public async getPackagesData(): Promise<PackageData[]> {
         const url = 'https://publisher.assetstore.unity3d.com/api/management/packages.json';
-        const data = await http.get(url).json<{ packages: PackageData[] }>();
-        return data.packages;
+        const data = await http.get(url).json<{ packages: any[] }>();
+        return data.packages.map(toPackageData);
     }
 
     public async getMonthsData(): Promise<MonthData[]> {
