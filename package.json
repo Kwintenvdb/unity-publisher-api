@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "chalk": "^4.1.0",
+        "currency.js": "^2.0.3",
         "form-data": "^3.0.0",
         "got": "^11.7.0",
         "jsdom": "^16.4.0",

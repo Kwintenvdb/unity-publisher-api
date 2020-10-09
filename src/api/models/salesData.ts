@@ -1,15 +1,17 @@
+import currency from 'currency.js';
+
 export interface SalesData {
     packageName: string;
-    price: string;
+    price: number;
     sales: number;
-    gross: string;
+    gross: number;
 }
 
 export function toSalesData(rawData: string[]): SalesData {
     return {
         packageName: rawData[0],
-        price: rawData[1],
-        sales: Number(rawData[2]),
-        gross: rawData[5],
+        price: currency(rawData[1]).value,
+        sales: parseInt(rawData[2]) || 0,
+        gross: currency(rawData[5]).value,
     };
 }
