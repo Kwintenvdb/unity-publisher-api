@@ -5,17 +5,21 @@ export interface RawReviewDataPage {
 }
 
 export interface ReviewData {
+    id: number;
     body: string;
     subject: string;
     rating: number;
+    package: string;
     packageId: number;
 }
 
 export function toReviewData(rawData: any): ReviewData {
     return {
+        id: Number(rawData.review_id),
         body: rawData.body,
         subject: rawData.subject,
         rating: Number(rawData.rating),
+        package: rawData.name,
         packageId: Number(rawData.package_id),
     };
 }
