@@ -11,6 +11,7 @@ export interface ReviewData {
     rating: number;
     package: string;
     packageId: number;
+    date: string;
 }
 
 export function toReviewData(rawData: any): ReviewData {
@@ -21,5 +22,6 @@ export function toReviewData(rawData: any): ReviewData {
         rating: Number(rawData.rating),
         package: rawData.name,
         packageId: Number(rawData.package_id),
+        date: rawData.created_at,
     };
 }
