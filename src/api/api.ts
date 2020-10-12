@@ -6,6 +6,7 @@ import { MonthData } from './models/monthData';
 import { SalesData, toSalesData } from './models/salesData';
 import { logError } from '../log';
 import { PackageData, toPackageData } from './models/packageData';
+import { RawReviewDataPage, ReviewData, toReviewData } from './models/reviewData';
 
 const CookieJar = tough.CookieJar;
 
@@ -66,7 +67,18 @@ export class UnityPublisherApi {
         return data.aaData.map(toSalesData);
     }
 
-    private getPublisherInfoUrl(type: 'months' | 'sales'): string {
+    // TODO add paging support
+    public async getReviewData(): Promise<ReviewData[]> {
+        const url = this.getPublisherInfoUrl('reviews') + '.json?page=1&rows=100&order_key=date&sort=desc';
+        console.log(url);
+        const data = await http.get(url)
+            .json<RawReviewDataPage>()
+            .catch(e => console.log(e));
+        // @ts-ignore
+        return data.reviews.map(toReviewData);
+    }
+
+    private getPublisherInfoUrl(type: 'months' | 'sales' | 'reviews'): string {
         if (!this.publisherId) {
             throw new Error('Publisher id not set.');
         }
