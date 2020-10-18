@@ -5,6 +5,7 @@ export interface SalesData {
     price: number;
     sales: number;
     gross: number;
+    lastSale: string;
 }
 
 export function toSalesData(rawData: string[]): SalesData {
@@ -13,5 +14,6 @@ export function toSalesData(rawData: string[]): SalesData {
         price: currency(rawData[1]).value,
         sales: parseInt(rawData[2]) || 0,
         gross: currency(rawData[5]).value,
+        lastSale: rawData[7],
     };
 }
