@@ -38,6 +38,11 @@ export class UnityPublisherApi {
         await this.fetchPublisherId();
     }
 
+    public async logout() {
+        jar.removeAllCookies();
+        this.publisherId = null;
+    }
+
     private async fetchPublisherId() {
         console.log('Fetching publisher id...');
         const overview = await this.getOverview();
